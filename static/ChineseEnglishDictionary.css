@@ -1,0 +1,67 @@
+/* Bilingual Dictionary Styles */
+body { font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 20px auto; padding: 20px; color: #333; }
+
+.hwg.x_xh0 {
+    display: block;
+}
+
+/* .pvg.x_xoh {
+    display: block;
+} */
+
+/* Headword */
+.hw { font-size: 2em; font-weight: bold; color: #1a1a1a; }
+
+/* Pronunciation */
+.prx, .ph { color: #666; font-size: 0.9em; }
+
+/* Part of speech */
+.ps { font-weight: bold; color: #0066cc; font-style: italic; }
+
+/* Inflections */
+.infg, .gr, .inf { color: #666; font-size: 0.95em; }
+
+/* Sense numbers */
+.sn { font-weight: bold; color: #0066cc; margin-right: 5px; }
+
+/* Indicators */
+.ind { color: #666; font-size: 0.9em; }
+
+/* Translations */
+.trans { color: #000; font-weight: 500; }
+.ty_pinyin { color: #999; font-size: 0.85em; margin-left: 3px; }
+
+/* Examples */
+.ex { color: #555; font-style: italic; }
+
+/* Collocates */
+.co, .cs { color: #666; }
+
+/* Labels */
+.lev, .reg, .fld { color: #0066cc; font-weight: 600; font-size: 0.85em; }
+
+/* Section labels */
+.ty_label { font-weight: bold; color: #0066cc; margin-right: 5px; }
+
+/* Grammar blocks */
+.gramb { margin: 15px 0; }
+
+/* Sense blocks */
+.semb { margin-left: 20px; display: block; margin-bottom: 10px; }
+
+/* Example groups */
+.exg { margin-left: 40px; display: block; margin-bottom: 5px; }
+span.gp.x_xdh.sn.ty_label.tg_semb + span.exg.x_xo4 {
+    display: inline;
+    margin-left: 0;
+}
+/* Phrasal verbs */
+.pvb { margin-top: 20px; }
+.pvsec { margin: 10px 0; }
+.pv { font-weight: bold; color: #1a1a1a; }
+
+/* Underline */
+.underline { text-decoration: underline; }
+
+/* Bold */
+.bold { font-weight: bold; }

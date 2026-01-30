@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chinese-English Dictionary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='ChineseEnglishDictionary.css') }}">
+  </head>
+  <body>
+    {% if entry %}
+    {{entry|safe}}
+    {% else %}
+    <form action="/ChineseEnglishDictionary" method="get">
+      <input type="text" name="word" placeholder="Enter word">
+      <button type="submit">Search</button>
+    </form>
+    {% endif %}
+  </body>
+</html>

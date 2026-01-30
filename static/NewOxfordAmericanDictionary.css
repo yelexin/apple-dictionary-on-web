@@ -1,0 +1,57 @@
+/* Dictionary Entry Styles */
+body { font-family: Georgia, serif; line-height: 1.6; max-width: 900px; margin: 20px auto; padding: 20px; color: #333; }
+
+/* Headword */
+.hw { font-size: 2em; font-weight: bold; color: #1a1a1a; }
+
+/* Pronunciation */
+.prx, .ph { color: #666; font-size: 0.9em; }
+
+/* Part of speech */
+.pos { font-weight: bold; color: #0066cc; font-style: italic; }
+
+/* Inflections */
+.infg { color: #666; font-size: 0.95em; }
+.inf { font-weight: 600; }
+
+/* Sense numbers */
+.sn { font-weight: bold; color: #0066cc; margin-right: 5px; }
+
+/* Definitions */
+.df { color: #000; font-weight: 500; }
+
+/* Examples */
+.eg { color: #555; font-style: italic; }
+.ex { display: inline; }
+
+/* Form variants */
+.fg, .f { color: #666; font-weight: 500; }
+
+/* Grammar notes */
+.gg { color: #666; font-size: 0.9em; }
+
+/* Labels */
+.lg, .reg, .ge, .sj { color: #0066cc; font-weight: 600; font-size: 0.9em; }
+
+/* Section labels */
+.ty_label { font-weight: bold; color: #0066cc; text-transform: uppercase; font-size: 0.85em; display: block; margin: 15px 0 10px; }
+
+/* Subsenses */
+.msDict { margin-left: 20px; display: block; margin-bottom: 8px; }
+.t_subsense { margin-left: 40px; }
+
+/* Phrasal verbs and phrases */
+.subEntry { margin: 10px 0; }
+.l { font-weight: bold; color: #1a1a1a; }
+
+/* Etymology */
+.etym { display: block; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; color: #666; font-size: 0.9em; }
+.ff { font-style: italic; }
+.la { font-weight: 600; }
+
+/* Bold text */
+.bold { font-weight: bold; }
+
+/* Spacing */
+.se1, .se2 { margin: 10px 0; }
+.subEntryBlock { margin: 20px 0; }
