@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='NewOxfordAmericanDictionary.css') }}">
   </head>
   <body>
-    {% if entry %}
+    {% if entries %}
+    {% for entry in entries %}
     {{entry|safe}}
+    {% endfor %}
     {% else %}
     <form action="/NewOxfordAmericanDictionary" method="get">
       <input type="text" name="word" placeholder="Enter word">

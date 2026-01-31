@@ -1,5 +1,5 @@
 /* Dictionary Entry Styles */
-body { font-family: Georgia, serif; line-height: 1.6; max-width: 900px; margin: 20px auto; padding: 20px; color: #333; }
+body { font-family: Georgia, sans-serif; line-height: 1.6; max-width: 900px; margin: 20px auto; padding: 20px; color: #333; }
 
 /* Headword */
 .hw { font-size: 2em; font-weight: bold; color: #1a1a1a; }

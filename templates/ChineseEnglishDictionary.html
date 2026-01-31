@@ -7,8 +7,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='ChineseEnglishDictionary.css') }}">
   </head>
   <body>
-    {% if entry %}
+    {% if entries %}
+    {% for entry in entries %}
     {{entry|safe}}
+    {% endfor %}
     {% else %}
     <form action="/ChineseEnglishDictionary" method="get">
       <input type="text" name="word" placeholder="Enter word">
