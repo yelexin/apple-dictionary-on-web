@@ -53,7 +53,7 @@ def main():
 
 
 @app.route("/ChineseEnglishDictionary")
-@limiter.limit("1 per second")
+@limiter.limit("1 per 5 seconds")
 def chinese_english_dictionary():
     word = request.args.get("word")
     if word is None:
@@ -83,7 +83,7 @@ def chinese_english_dictionary():
 
 
 @app.route("/NewOxfordAmericanDictionary")
-@limiter.limit("1 per second")
+@limiter.limit("1 per 5 seconds")
 def new_oxford_american_dictionary():
     word = request.args.get("word")
     if word is None:
