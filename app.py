@@ -1,4 +1,6 @@
 from flask import Flask, request, render_template
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sqlite3
 import re
 from markupsafe import escape
@@ -6,6 +8,13 @@ import utils
 
 app = Flask(__name__)
 
+# Initialize rate limiter
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["10000 per day"],
+    storage_uri="memory://"
+)
 
 def get_ch_eng_db():
     conn = sqlite3.connect("db/ChineseEnglishDictionary.db")
@@ -44,6 +53,7 @@ def main():
 
 
 @app.route("/ChineseEnglishDictionary")
+@limiter.limit("1 per second")
 def chinese_english_dictionary():
     word = request.args.get("word")
     if word is None:
@@ -73,6 +83,7 @@ def chinese_english_dictionary():
 
 
 @app.route("/NewOxfordAmericanDictionary")
+@limiter.limit("1 per second")
 def new_oxford_american_dictionary():
     word = request.args.get("word")
     if word is None:

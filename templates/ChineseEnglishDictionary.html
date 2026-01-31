@@ -12,10 +12,29 @@
     {{entry|safe}}
     {% endfor %}
     {% else %}
-    <form action="/ChineseEnglishDictionary" method="get">
-      <input type="text" name="word" placeholder="Enter word">
-      <button type="submit">Search</button>
+    <form action="/ChineseEnglishDictionary" method="get" onsubmit="disableButton(event)">
+      <input type="text" name="word" placeholder="Enter word" required>
+      <button type="submit" id="searchBtn">Search</button>
     </form>
+    <script>
+      function disableButton(event) {
+        const btn = document.getElementById('searchBtn');
+        const input = event.target.querySelector('input[name="word"]');
+        if (input.value.trim()) {
+          btn.disabled = true;
+          btn.textContent = 'Searching...';
+        }
+      }
+      
+      // Re-enable button when navigating back
+      window.addEventListener('pageshow', function(event) {
+        const btn = document.getElementById('searchBtn');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Search';
+        }
+      });
+    </script>
     {% endif %}
   </body>
 </html>
