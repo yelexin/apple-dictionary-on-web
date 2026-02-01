@@ -1,22 +1,29 @@
-from flask import Flask, request, render_template
+import csv
+import os
+import re
+from typing import Callable
+
+import inflect
+from flask import Flask, render_template, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from typing import Callable
-import re
 from markupsafe import escape
-from db import get_ch_eng_db, get_new_oxford_db, lookup_word_in_ch_eng_db, lookup_word_in_new_oxford_db
-import utils
-import csv
-import inflect
-import importlib.resources
 from symspellpy import SymSpell, Verbosity
 
+import utils
+from db import (
+    get_ch_eng_db,
+    get_new_oxford_db,
+    lookup_word_in_ch_eng_db,
+    lookup_word_in_new_oxford_db,
+)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SYM_SPELL_DICTIONARY_PATH = os.path.join(BASE_DIR, "assets", "en-80k.txt")
 
 sym_spell = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
 sym_spell.load_dictionary(
-    importlib.resources.path(
-        "symspellpy", "frequency_dictionary_en_82_765.txt"
-    ).__enter__(),
+    SYM_SPELL_DICTIONARY_PATH,
     term_index=0,
     count_index=1,
 )
@@ -30,8 +37,6 @@ limiter = Limiter(
     default_limits=["10000 per day"],
     storage_uri="memory://",
 )
-
-
 
 
 def init():
@@ -52,7 +57,8 @@ def init():
     # generate a mapping from other verb forms to base forms
     global verb_form_to_base
     verb_form_to_base = {}
-    with open("verbs-dictionaries.csv", "r") as f:
+    VERBS_DICTIONARIES_PATH = os.path.join(BASE_DIR, "assets", "verbs-dictionaries.csv")
+    with open(VERBS_DICTIONARIES_PATH, "r") as f:
         reader = csv.reader(f, delimiter="\t")
         for row in reader:
             if len(row) == 5:
@@ -65,8 +71,6 @@ def init():
                 # The base form maps to itself for consistency
                 if base not in verb_form_to_base:
                     verb_form_to_base[base] = base
-
-
 
 
 init()
