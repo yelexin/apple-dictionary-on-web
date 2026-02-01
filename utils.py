@@ -45,7 +45,7 @@ def jaro_similarity(s1: str, s2: str) -> float:
 
     return (matches / len1 + matches / len2 + (matches - transpositions) / matches) / 3.0
 
-def find_most_similar(word: str, candidates: list[str]) -> str | None:
+def find_most_similar(word: str, candidates: set[str]) -> str | None:
     most_similar_word = None
     highest_similarity = 0.0
     for candidate in candidates:
