@@ -1,3 +1,6 @@
+import time
+from functools import wraps
+
 
 def jaro_similarity(s1: str, s2: str) -> float:
     if s1 == s2:
@@ -43,7 +46,10 @@ def jaro_similarity(s1: str, s2: str) -> float:
 
     transpositions //= 2
 
-    return (matches / len1 + matches / len2 + (matches - transpositions) / matches) / 3.0
+    return (
+        matches / len1 + matches / len2 + (matches - transpositions) / matches
+    ) / 3.0
+
 
 def find_most_similar(word: str, candidates: set[str]) -> str | None:
     most_similar_word = None
@@ -54,3 +60,16 @@ def find_most_similar(word: str, candidates: set[str]) -> str | None:
             highest_similarity = similarity
             most_similar_word = candidate
     return most_similar_word
+
+
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f"Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds")
+        return result
+
+    return timeit_wrapper
