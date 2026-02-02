@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Oxford American Dictionary</title>
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='NewOxfordAmericanDictionary.css') }}"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='result.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='searchBar.css') }}">
 
@@ -15,7 +14,7 @@
     {{entry|safe}}
     {% endfor %}
     {% else %}
-    <form action="/NewOxfordAmericanDictionary" method="get" onsubmit="disableButton(event)">
+    <form action="/SwedishEnglishDictionary" method="get" onsubmit="disableButton(event)">
       <input type="text" name="word" placeholder="Enter word" required>
       <button type="submit" id="searchBtn">Search</button>
     </form>

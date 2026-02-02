@@ -12,6 +12,7 @@ MarkupSafe==3.0.3
 more-itertools==10.8.0
 ordered-set==4.1.0
 packaging==26.0
+python-dotenv==1.2.1
 symspellpy==6.9.0
 typeguard==4.4.4
 typing_extensions==4.15.0

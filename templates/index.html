@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Dictionary</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
-    <a href="ChineseEnglishDictionary">Chinese English Dictionary</a>
-    <a href="NewOxfordAmericanDictionary">New Oxford American Dictionary</a>
+    <div class="container">
+        <h1>Select Dictionary</h1>
+        <div class="dictionary-links">
+            <a href="ChineseEnglishDictionary">Chinese English Dictionary</a>
+            <a href="NewOxfordAmericanDictionary">New Oxford American Dictionary</a>
+            <a href="SwedishEnglishDictionary">Swedish English Dictionary</a>
+        </div>
+    </div>
 </body>
 </html>

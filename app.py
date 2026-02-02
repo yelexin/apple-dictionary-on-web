@@ -1,9 +1,7 @@
-import csv
 import os
-import re
 from typing import Callable
 
-import inflect
+from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -11,13 +9,9 @@ from markupsafe import escape
 from symspellpy import SymSpell, Verbosity
 
 import utils
-from db import (
-    get_ch_eng_db,
-    get_new_oxford_db,
-    lookup_word_in_ch_eng_db,
-    lookup_word_in_new_oxford_db,
-)
+from service import Dictionary, DictionaryService, HtmlService
 
+load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SYM_SPELL_DICTIONARY_PATH = os.path.join(BASE_DIR, "assets", "en-80k.txt")
 
@@ -27,7 +21,6 @@ sym_spell.load_dictionary(
     term_index=0,
     count_index=1,
 )
-p = inflect.engine()
 
 app = Flask(__name__)
 # Initialize rate limiter
@@ -40,37 +33,8 @@ limiter = Limiter(
 
 
 def init():
-    conn = get_ch_eng_db()
-    # get all words from db
-    rows = conn.execute("SELECT title FROM definitions").fetchall()
-    global ch_eng_db_words
-    ch_eng_db_words = set([row["title"] for row in rows])
-    conn.close()
-
-    conn = get_new_oxford_db()
-    # get all words from db
-    rows = conn.execute("SELECT title FROM definitions").fetchall()
-    global new_oxford_db_words
-    new_oxford_db_words = set([row["title"] for row in rows])
-    conn.close()
-
-    # generate a mapping from other verb forms to base forms
-    global verb_form_to_base
-    verb_form_to_base = {}
-    VERBS_DICTIONARIES_PATH = os.path.join(BASE_DIR, "assets", "verbs-dictionaries.csv")
-    with open(VERBS_DICTIONARIES_PATH, "r") as f:
-        reader = csv.reader(f, delimiter="\t")
-        for row in reader:
-            if len(row) == 5:
-                base, third_person, past, past_participle, present_participle = row
-                # Map all forms to the base form
-                verb_form_to_base[third_person] = base
-                verb_form_to_base[past] = base
-                verb_form_to_base[past_participle] = base
-                verb_form_to_base[present_participle] = base
-                # The base form maps to itself for consistency
-                if base not in verb_form_to_base:
-                    verb_form_to_base[base] = base
+    if os.getenv("ENABLE_CACHE") == "true":
+        DictionaryService.create_cache()
 
 
 init()
@@ -80,14 +44,6 @@ def toLowerCase(word: str) -> str:
     return word.lower()
 
 
-def toBaseForm(word: str) -> str | None:
-    return verb_form_to_base.get(word, None)
-
-
-def toSingular(word: str) -> str | None:
-    return p.singular_noun(word) or None  # type: ignore
-
-
 def toSimilarWord(words_set: set[str]) -> Callable[[str], str | None]:
     def inner(word: str) -> str | None:
         return utils.find_most_similar(word, words_set)
@@ -95,56 +51,65 @@ def toSimilarWord(words_set: set[str]) -> Callable[[str], str | None]:
     return inner
 
 
-def correctSpelling(word: str) -> str | None:
+def correctSpelling(word: str) -> str:
     suggestions = sym_spell.lookup(word, Verbosity.CLOSEST, max_edit_distance=2)
     if suggestions:
         return suggestions[0].term
-    return None
+    return word
+
+
+def toLowerCaseAndCorrectSpelling(word: str) -> str:
+    lower_word = word.lower()
+    suggestions = sym_spell.lookup(lower_word, Verbosity.CLOSEST, max_edit_distance=2)
+    if suggestions:
+        return suggestions[0].term
+    return lower_word
+
+
+def returnSelf(word: str) -> str:
+    return word
 
 
 def render_dictionary(
     word: str | None,
-    words_set,
-    lookup_db,
-    template_name: str,
-    link_prefix: str,
+    dictionary: Dictionary,
 ):
+    DICTIONARY_TEMPLATE = dictionary.value + ".html"
+    LINK_PREFIX = f"/{dictionary.value}"
     if word is None:
-        return render_template(template_name)
+        return render_template(DICTIONARY_TEMPLATE)
+    word = word.strip()
     if len(word) > 60:
         return render_template("WordNotFound.html", word=escape(word))
-    # try exact match first
-    if not word in words_set:
-        word = word.lower()
-        transforms = [
-            lambda x: x,
-            toBaseForm,
-            toSingular,
-            correctSpelling,
-            # toSimilarWord(words_set),
-        ]
-        for transform in transforms:
-            transformed_word = transform(word)
-            if transformed_word and transformed_word in words_set:
-                word = transformed_word
-                break
-
-    if word is None:
-        return render_template("WordNotFound.html", word=escape(word))
-    rows = lookup_db(word)
-    if rows is None or len(rows) == 0:
-        return render_template("WordNotFound.html", word=escape(word))
-    # fix links in entries
-    entries = [row["entry"].decode("utf-8") for row in rows]
-    entries = [
-        re.sub(
-            r'href="x-dictionary.*?" title="(.*?)"',
-            f'href="{link_prefix}?word=\\1" title="\\1"',
-            entry,
-        )
-        for entry in entries
+    dictionary_service = DictionaryService(dictionary)
+    transforms = [
+        returnSelf,
+        toLowerCase,
+        correctSpelling,
+        toLowerCaseAndCorrectSpelling,
     ]
-    return render_template(template_name, entries=entries)
+    definitions = []
+    for transform in transforms:
+        # try to transform the word
+        transformed_word = transform(word)
+        print(transformed_word)
+        # try exact match first
+        definitions = dictionary_service.find_definitions_by_term(transformed_word)
+        # then try alt match
+        if len(definitions) == 0:
+            definitions = dictionary_service.find_definitions_by_alt(transformed_word)
+        if len(definitions) > 0:
+            break
+    if len(definitions) == 0:
+        return render_template("WordNotFound.html", word=escape(word))
+
+    for i in range(len(definitions)):
+        definitions[i] = HtmlService.fix_links_in_definition(
+            definitions[i], LINK_PREFIX
+        )
+        definitions[i] = HtmlService.remove_stylesheet_tags(definitions[i])
+
+    return render_template(DICTIONARY_TEMPLATE, entries=definitions)
 
 
 @app.route("/")
@@ -158,10 +123,7 @@ def chinese_english_dictionary():
     word = request.args.get("word")
     return render_dictionary(
         word=word,
-        words_set=ch_eng_db_words,
-        lookup_db=lookup_word_in_ch_eng_db,
-        template_name="ChineseEnglishDictionary.html",
-        link_prefix="/ChineseEnglishDictionary",
+        dictionary=Dictionary.CHINESE_ENGLISH,
     )
 
 
@@ -171,8 +133,15 @@ def new_oxford_american_dictionary():
     word = request.args.get("word")
     return render_dictionary(
         word=word,
-        words_set=new_oxford_db_words,
-        lookup_db=lookup_word_in_new_oxford_db,
-        template_name="NewOxfordAmericanDictionary.html",
-        link_prefix="/NewOxfordAmericanDictionary",
+        dictionary=Dictionary.NEW_OXFORD_AMERICAN,
+    )
+
+
+@app.route("/SwedishEnglishDictionary")
+@limiter.limit("1 per 1 second")
+def swedish_english_dictionary():
+    word = request.args.get("word")
+    return render_dictionary(
+        word=word,
+        dictionary=Dictionary.SWEDISH_ENGLISH_DICTIONARY,
     )
