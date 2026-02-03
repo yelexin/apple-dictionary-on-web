@@ -209,3 +209,4 @@ __marimo__/
 .DS_Store
 # Database files (too large)
 db/*.db
+*.zip
