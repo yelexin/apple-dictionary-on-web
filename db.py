@@ -1,5 +1,4 @@
 import sqlite3
-from functools import wraps
 
 from utils import timeit
 
