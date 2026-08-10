@@ -3,18 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Dictionary</title>
+    <title>Free Ad-Free Online Dictionary - English, Chinese & Swedish Lookup</title>
+    <meta name="description" content="A free, ad-free online dictionary offering English, Chinese-English, and Swedish-English word lookups. Powered by Apple's built-in dictionaries including the New Oxford American Dictionary.">
+    <meta name="keywords" content="dictionary, online dictionary, ad-free dictionary, English dictionary, Chinese English dictionary, Swedish English dictionary, New Oxford American Dictionary, word lookup, free dictionary">
+    <meta name="author" content="Apple Dictionary on Web">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.url_root }}">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Free Ad-Free Online Dictionary - English, Chinese & Swedish Lookup">
+    <meta property="og:description" content="A free, ad-free online dictionary offering English, Chinese-English, and Swedish-English word lookups. Powered by Apple's built-in dictionaries.">
+    <meta property="og:url" content="{{ request.url_root }}">
+    <meta property="og:site_name" content="Apple Dictionary on Web">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Free Ad-Free Online Dictionary - English, Chinese & Swedish Lookup">
+    <meta name="twitter:description" content="A free, ad-free online dictionary offering English, Chinese-English, and Swedish-English word lookups. No ads, no distractions.">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Apple Dictionary on Web",
+        "url": "{{ request.url_root }}",
+        "description": "A free, ad-free online dictionary offering English, Chinese-English, and Swedish-English word lookups.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.url_root }}NewOxfordAmericanDictionary?word={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Select Dictionary</h1>
-        <div class="dictionary-links">
+        <h1>Online Dictionary</h1>
+        <p class="tagline">Free, ad-free word lookup powered by Apple's built-in dictionaries</p>
+        <nav class="dictionary-links" aria-label="Available dictionaries">
             <a href="ChineseEnglishDictionary">Chinese English Dictionary</a>
             <a href="NewOxfordAmericanDictionary">New Oxford American Dictionary</a>
             <a href="SwedishEnglishDictionary">Swedish English Dictionary</a>
-        </div>
+        </nav>
     </div>
 </body>
 </html>
